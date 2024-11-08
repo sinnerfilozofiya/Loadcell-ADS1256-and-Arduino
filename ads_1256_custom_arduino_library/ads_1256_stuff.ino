@@ -349,7 +349,7 @@ void read_four_values() {
 
   // Array of multiplexer settings for differential inputs
   uint8_t mux_settings[] = {DIFF_0_1, DIFF_2_3, DIFF_4_5, DIFF_6_7};
-  
+
   for (int i = 0; i < 4; i++) {
     waitforDRDY(); // Wait until DRDY is LOW
     SPI.beginTransaction(SPISettings(SPI_SPEED, MSBFIRST, SPI_MODE1));
@@ -367,7 +367,6 @@ void read_four_values() {
     SPI.transfer(WAKEUP);
     delayMicroseconds(1);
 
-    // Read data from the ADC
     SPI.transfer(RDATA); // Issue RDATA command
     delayMicroseconds(7);
 
@@ -394,17 +393,26 @@ void read_four_values() {
 
     digitalWriteFast(10, HIGH);
     SPI.endTransaction();
+
+    // Wait for the next data ready before changing MUX setting for the next channel
+    waitforDRDY(); // Wait until DRDY is LOW
   }
 
+  // Assign the values to the global variables
+  val1 = adc_val1;
+  val2 = adc_val2;
+  val3 = adc_val3;
+  val4 = adc_val4;
+
   // Print the values for all four channels side by side
-  Serial.print("Channel 0-1: ");
-  Serial.print(adc_val1);
-  Serial.print("\tChannel 2-3: ");
-  Serial.print(adc_val2);
-  Serial.print("\tChannel 4-5: ");
-  Serial.print(adc_val3);
-  Serial.print("\tChannel 6-7: ");
-  Serial.println(adc_val4);
+  // Serial.print("Channel 0-1: ");
+  // Serial.print(adc_val1);
+  // Serial.print("\tChannel 2-3: ");
+  // Serial.print(adc_val2);
+  // Serial.print("\tChannel 4-5: ");
+  // Serial.print(adc_val3);
+  // Serial.print("\tChannel 6-7: ");
+  // Serial.println(adc_val4);
 }
 
 //library files
